@@ -22,7 +22,7 @@ jobs:
     - name: Log in to registry
       uses: docker/login-action@v2
       with:
-        registry: https://mcr.microsoft.com/
+        registry: wordpressapp.azurecr.io
         username: ${{ secrets.AzureAppService_ContainerUsername_0927190dcb294698ab48d4f045d331c2 }}
         password: ${{ secrets.AzureAppService_ContainerPassword_e57858da982841f6994f9dd6e8fcd433 }}
 
@@ -30,22 +30,22 @@ jobs:
       uses: docker/build-push-action@v3
       with:
         push: true
-        tags: mcr.microsoft.com/${{ secrets.AzureAppService_ContainerUsername_0927190dcb294698ab48d4f045d331c2 }}/appsvc/wordpress-alpine-php:${{ github.sha }}
+        tags: wordpressapp.azurecr.io/${{ secrets.AzureAppService_ContainerUsername_0927190dcb294698ab48d4f045d331c2 }}/appsvc/wordpress-alpine-php:${{ github.sha }}
         file: ./Dockerfile
 
-  deploy:
-    runs-on: ubuntu-latest
-    needs: build
-    environment:
-      name: 'production'
-      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
+  # deploy:
+  #   runs-on: ubuntu-latest
+  #   needs: build
+  #   environment:
+  #     name: 'production'
+  #     url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
 
-    steps:
-    - name: Deploy to Azure Web App
-      id: deploy-to-webapp
-      uses: azure/webapps-deploy@v2
-      with:
-        app-name: 'wordpress-server'
-        slot-name: 'production'
-        publish-profile: ${{ secrets.AzureAppService_PublishProfile_b8afd3094ff746e89230fb63c257862d }}
-        images: 'mcr.microsoft.com/${{ secrets.AzureAppService_ContainerUsername_0927190dcb294698ab48d4f045d331c2 }}/appsvc/wordpress-alpine-php:${{ github.sha }}'
+  #   steps:
+  #   - name: Deploy to Azure Web App
+  #     id: deploy-to-webapp
+  #     uses: azure/webapps-deploy@v2
+  #     with:
+  #       app-name: 'wordpress-server'
+  #       slot-name: 'production'
+  #       publish-profile: ${{ secrets.AzureAppService_PublishProfile_b8afd3094ff746e89230fb63c257862d }}
+  #       images: 'mcr.microsoft.com/${{ secrets.AzureAppService_ContainerUsername_0927190dcb294698ab48d4f045d331c2 }}/appsvc/wordpress-alpine-php:${{ github.sha }}'
